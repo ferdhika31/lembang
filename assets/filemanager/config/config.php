@@ -44,7 +44,9 @@ define('USE_ACCESS_KEYS', true); // TRUE or FALSE
 |    |   |   |   |- responsivefilemanager
 |    |   |   |   |   |- plugin.min.js
 */
-
+$http = 'http' . ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 's' : '') . '://';
+$urlbaru = str_replace("index.php","", $_SERVER['SCRIPT_NAME']);
+$base    = "$http" . $_SERVER['SERVER_NAME'] . "" . $urlbaru;
 $config = array(
 
 	/*
@@ -55,8 +57,7 @@ $config = array(
 	| without final /
 	|
 	*/
-
-	'base_url' => ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] && ! in_array(strtolower($_SERVER['HTTPS']), array( 'off', 'no' ))) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'].'/lembang/assets',
+	'base_url' => $base,
 
 	/*
 	|--------------------------------------------------------------------------
