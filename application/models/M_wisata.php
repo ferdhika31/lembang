@@ -103,7 +103,7 @@ class M_wisata extends CI_Model {
 
 	// Nilai/rating
 	public function getAvRatingWisata($wisata_id=null){
-		$query = $this->db->query("select *,SUM(jumlah_bintang)/COUNT(rating_alam_id) as jumRating from rating_alam where wisata_alam_id=$wisata_id");
+		$query = $this->db->query("select *,SUM(jumlah_bintang)/COUNT(rating_alam_id) as jumRating, COUNT(rating_alam_id) as totRating from rating_alam where wisata_alam_id=$wisata_id");
 		$query = $query->result_array();
 
 		if(!empty($query)){

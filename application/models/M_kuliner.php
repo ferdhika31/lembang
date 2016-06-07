@@ -129,6 +129,16 @@ class M_kuliner extends CI_Model {
 		return $query;
 	}
 
+	public function getKomentarWisata($id_wisata=null){
+		$query = $this->db->join($this->tb_kuliner,$this->tb_kuliner.'.wisata_kuliner_id='.$this->tb_komentar.'.wisata_kuliner_id');
+		$query = $this->db->join($this->tb_user,$this->tb_user.'.user_id='.$this->tb_komentar.'.user_id');
+		$query = $this->db->get_where($this->tb_komentar,array($this->tb_komentar.'.wisata_kuliner_id'=>$id_wisata));
+
+		$query = $query->result_array();
+
+		return $query;
+	}
+
 	public function getKomentarPer($awal="",$akhir=""){
 		// $query = $this->db->select("*,".$this->tb_kuliner.".stt as status_wisata");
 		$query = $this->db->join($this->tb_kuliner,$this->tb_kuliner.'.wisata_kuliner_id='.$this->tb_komentar.'.wisata_kuliner_id');
