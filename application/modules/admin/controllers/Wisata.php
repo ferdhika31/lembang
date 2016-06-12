@@ -510,6 +510,8 @@ class Wisata extends Main{
 
 		if(!empty($id)){
 			$delete = $this->m_wisata->hapusGaleri($id);
+			$hapRat = $this->m_wisata->hapusRating($id);
+			$hapKom = $this->m_wisata->hapusKomentarOnWis($id);
 			if($delete){
 				$this->m_wisata->hapusWisata(array('wisata_alam_id'=>$id));
 				$notif = "<div class=\"note note-success\">";

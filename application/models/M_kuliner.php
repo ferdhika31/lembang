@@ -101,8 +101,16 @@ class M_kuliner extends CI_Model {
 	}
 
 	// Nilai/rating
+	public function topWisata(){
+		$query = $this->db->query("select *,SUM(jumlah_bintang)/COUNT(rating_kuliner_id) as jumRating, COUNT(rating_kuliner_id) as totRating 
+			from rating_kuliner GROUP BY wisata_kuliner_id ORDER BY totRating desc,jumRating desc limit 3");
+		$query = $query->result_array();
+
+		return $query;
+	}
+
 	public function getAvRatingWisata($wisata_id=null){
-		$query = $this->db->query("select *,SUM(jumlah_bintang)/COUNT(rating_kuliner_id) as jumRating from rating_kuliner where wisata_kuliner_id=$wisata_id");
+		$query = $this->db->query("select *,SUM(jumlah_bintang)/COUNT(rating_kuliner_id) as jumRating, COUNT(rating_kuliner_id) as totRating from rating_kuliner where wisata_kuliner_id=$wisata_id");
 		$query = $query->result_array();
 
 		if(!empty($query)){
@@ -118,7 +126,46 @@ class M_kuliner extends CI_Model {
 		return $query;
 	}
 
+	public function cekRating($where=array()){
+		$query = $this->db->get_where($this->tb_rating,$where);
+		$query = $query->result_array();
+
+		if(!empty($query)){
+			return $query[0];
+		}
+	}
+
+	public function tambahRating($inp=array()){
+		$query = $this->db->insert($this->tb_rating,$inp);
+		return $query;
+	}
+
+	public function ubahRating($field=array(),$idna=array()){
+		$query = $this->db->update($this->tb_rating,$field,$idna);
+		return $query;
+	}
+
+	public function hapusRating($id_wisata=null){
+		$query = $this->db->delete($this->tb_rating,array('wisata_kuliner_id'=>$id_wisata));
+		return $query;
+	}
+
 	// Komentar
+	public function kirimKomentar($inp=array()){
+		$query = $this->db->insert($this->tb_komentar,$inp);
+		return $query;
+	}
+
+	public function hapusKomentar($id_komentar=null){
+		$query = $this->db->delete($this->tb_komentar,array('komentar_kuliner_id'=>$id_komentar));
+		return $query;
+	}
+
+	public function hapusKomentarOnWis($id_wisata=null){
+		$query = $this->db->delete($this->tb_komentar,array('wisata_kuliner_id'=>$id_wisata));
+		return $query;
+	}
+
 	public function getAllKomentar(){
 		$query = $this->db->join($this->tb_kuliner,$this->tb_kuliner.'.wisata_kuliner_id='.$this->tb_komentar.'.wisata_kuliner_id');
 		$query = $this->db->join($this->tb_user,$this->tb_user.'.user_id='.$this->tb_komentar.'.user_id');

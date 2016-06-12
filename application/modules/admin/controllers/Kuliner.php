@@ -510,6 +510,8 @@ class Kuliner extends Main{
 
 		if(!empty($id)){
 			$delete = $this->m_kuliner->hapusGaleri($id);
+			$hapRat = $this->m_kuliner->hapusRating($id);
+			$hapKom = $this->m_kuliner->hapusKomentarOnWis($id);
 			if($delete){
 				$this->m_kuliner->hapusWisata(array('wisata_kuliner_id'=>$id));
 				$notif = "<div class=\"note note-success\">";

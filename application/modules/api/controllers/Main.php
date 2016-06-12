@@ -18,6 +18,10 @@ class Main extends CI_Controller {
 		header('Access-Control-Allow-Credentials: true');
 		header('Access-Control-Allow-Method: PUT, GET, POST, DELETE, OPTIONS');
 		header('Access-Control-Allow-Headers: Content-Type, x-xsrf-token');
+
+		$this->load->helper(array(
+			'tgl_indonesia'
+		));
 	}
 
 	protected function outputJson($response=array(),$status=200){

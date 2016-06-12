@@ -100,7 +100,7 @@
 												$no=1;
 												foreach ($dataWisata as $result):
 													$temp[] = array(
-			                                            'href_delete'   => site_url('admin/wisata/delete/'.$result['wisata_id'])
+			                                            'href_delete'   => site_url('admin/kuliner/delete/'.$result['wisata_id'])
 			                                        );
 												?>
 												<tr>

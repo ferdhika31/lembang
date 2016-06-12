@@ -21,7 +21,7 @@
 					<!-- BEGIN DASHBOARD STATS -->
 					<div class="row">
 						<!-- Dashboard admin -->
-						<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+						<!-- <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
 							<div class="dashboard-stat blue-madison">
 								<div class="visual">
 									<i class="fa fa-user"></i>
@@ -74,7 +74,7 @@
 									View more <i class="m-icon-swapright m-icon-white"></i>
 								</a>
 							</div>
-						</div>
+						</div> -->
 					</div>
 					
 					

@@ -30,30 +30,34 @@ class Kuliner extends Main{
 		$data = array();
 
 		foreach ($wisata as $result) {
-			$wisata_id = $result['wisata_kuliner_id'];
+			if($result['status_kuliner']==1){
+				$wisata_id = $result['wisata_kuliner_id'];
 
-			// rating/nilai
-			$rating = $this->m_kuliner->getAvRatingWisata($result['wisata_kuliner_id']);
-			$jumlahRating = $rating['jumRating'];
+				// rating/nilai
+				$rating = $this->m_kuliner->getAvRatingWisata($result['wisata_kuliner_id']);
+				$jumlahRating = $rating['jumRating'];
 
-			$data[] = array(
-				'wisata_id'				=> $wisata_id,
-				'nama_wisata'			=> $result['nama_wisata_kuliner'],
-				'cover_photo'			=> base_url('assets/upload/'.$result['cover_photo']),
-				'alamat_wisata'			=> $result['alamat_wisata_kuliner'],
-				'deskripsi_wisata'		=> $result['deskripsi_wisata_kuliner'],
-				'cuplikan_deskripsi'	=> substr($result['deskripsi_wisata_kuliner'], 0,160),
-				'hari'					=> unserialize($result['hari']),
-				'jam_buka'				=> $result['jam_buka'],
-				'jam_tutup'				=> $result['jam_tutup'],
-				'lat'					=> $result['lat'],
-				'long'					=> $result['long'],
-				'latlong'				=> $result['lat'].','.$result['long'],
-				'status'				=> $result['status_kuliner'],
-				'date_add'				=> $result['date_add'],
-				'oleh'					=> $result['nama'],
-				'nilai'					=> ceil($jumlahRating)
-			);
+				if($result['status_kuliner']==1){
+					$data[] = array(
+						'wisata_id'				=> $wisata_id,
+						'nama_wisata'			=> $result['nama_wisata_kuliner'],
+						'cover_photo'			=> base_url('assets/upload/'.$result['cover_photo']),
+						'alamat_wisata'			=> $result['alamat_wisata_kuliner'],
+						'deskripsi_wisata'		=> $result['deskripsi_wisata_kuliner'],
+						'cuplikan_deskripsi'	=> substr($result['deskripsi_wisata_kuliner'], 0,160),
+						'hari'					=> unserialize($result['hari']),
+						'jam_buka'				=> $result['jam_buka'],
+						'jam_tutup'				=> $result['jam_tutup'],
+						'lat'					=> $result['lat'],
+						'long'					=> $result['long'],
+						'latlong'				=> $result['lat'].','.$result['long'],
+						'status'				=> $result['status_kuliner'],
+						'date_add'				=> $result['date_add'],
+						'oleh'					=> $result['nama'],
+						'nilai'					=> ceil($jumlahRating)
+					);
+				}
+			}
 		}
 
 		$this->outputJson($data);
@@ -83,7 +87,8 @@ class Kuliner extends Main{
 				'status'				=> $wisata['status_kuliner'],
 				'date_add'				=> $wisata['date_add'],
 				'oleh'					=> $wisata['nama'],
-				'nilai'					=> ceil($jumlahRating)
+				'nilai'					=> ceil($jumlahRating),
+				'totRating'				=> $rating['totRating']
 			);
 		}
 
@@ -112,6 +117,51 @@ class Kuliner extends Main{
 		$this->outputJson($data);
 	}
 
+	public function kirimKomentar(){
+		$postdata = (array)json_decode(file_get_contents('php://input'));
+
+		@$userid = $postdata['userid'];
+		@$wisata_id = $postdata['wisata_id'];
+		@$komentar = $postdata['komentar'];
+
+		$data = array('status'=>false);
+
+		if(!empty($userid) && !empty($komentar)){
+			$input = array(
+				'komentar'			=> $komentar,
+				'date_add'			=> date("Y-m-d h:i:s"),
+				'user_id'			=> $userid,
+				'wisata_kuliner_id'	=> $wisata_id
+			);
+
+			$kirim = $this->m_kuliner->kirimKomentar($input);
+
+			if($kirim){
+				$data = array('status'=>true);
+			}
+		}
+
+		$this->outputJson($data);
+	}
+
+	public function hapusKomentar(){
+		$postdata = (array)json_decode(file_get_contents('php://input'));
+
+		@$komentar_id = $postdata['komentar_id'];
+
+		$data = array('status'=>false);
+
+		if(!empty($komentar_id)){
+			$hapus = $this->m_kuliner->hapusKomentar($komentar_id);
+
+			if($hapus){
+				$data = array('status'=>true);
+			}
+		}
+
+		$this->outputJson($data);
+	}
+
 	public function ambilKomentar($id=null){
 		$wisata = $this->m_kuliner->getKomentarWisata($id);
 
@@ -121,8 +171,10 @@ class Kuliner extends Main{
 			$wisata_id = $result['wisata_kuliner_id'];
 
 			$data[] = array(
+				'komentar_id'			=> $result['komentar_kuliner_id'],
 				'wisata_id'				=> $wisata_id,
 				'komentar'				=> strip_tags($result['komentar']),
+				'fb_id'					=> $result['fb_id'],
 				'oleh'					=> $result['nama'],
 				'date_add'				=> $result['date_add']
 			);
@@ -132,17 +184,60 @@ class Kuliner extends Main{
 	}
 
 	public function ambilTopWisata(){
-		$wisata = $this->m_kuliner->getAllWisata();
+		$topWisata = $this->m_kuliner->topWisata();
 
 		$data = array();
 
-		foreach ($wisata as $result) {
-			$rat = $this->m_kuliner->getAvRatingWisata($result['wisata_kuliner_id']);
+		foreach ($topWisata as $result) {
+			$wisata = $this->m_kuliner->getOneWisata(array("wisata_kuliner.wisata_kuliner_id" => $result['wisata_kuliner_id']));
 			$data[] = array(
-				'nama_wisata'	=> $result['nama_wisata_kuliner'],
-				'jumRating'		=> $rat['jumRating'],
-				'totRating'		=> $rat['totRating']
+				'wisata_id'		=> $result['wisata_kuliner_id'],
+				'nama_wisata'	=> $wisata['nama_wisata_kuliner'],
+				'alamat_wisata'	=> $wisata['alamat_wisata_kuliner'],
+				'photo_wisata'	=> base_url('assets/upload/'.$wisata['cover_photo']),
+				'jumRating'		=> $result['jumRating'],
+				'totRating'		=> $result['totRating']
 			);
+		}
+
+
+		$this->outputJson($data);
+	}
+
+	public function tambahRating(){
+		$postdata = (array)json_decode(file_get_contents('php://input'));
+
+		@$idWisata = $postdata['wisata_id'];
+		@$idUser = $postdata['userid'];
+		@$jumRating = $postdata['jumRating'];
+
+		$data = array('status'=>false);
+
+		if(!empty($idWisata) && !empty($idUser) && !empty($jumRating)){
+			$rating = $this->m_kuliner->cekRating(array('wisata_kuliner_id'=> $idWisata, 'user_id' => $idUser));
+
+			if(!empty($rating)){ // update
+				$val = array(
+					'jumlah_bintang' 	=> $jumRating,
+					'date_add'			=> date('Y-m-d h:i:s')
+				);
+				$where = array('rating_kuliner_id'=>$rating['rating_kuliner_id']);
+
+				$ubahRat = $this->m_kuliner->ubahRating($val,$where); 
+				
+				if($ubahRat) $data = array('status'=>true);
+			}else{ // add
+				$val = array(
+					'jumlah_bintang' 	=> $jumRating,
+					'date_add'			=> date('Y-m-d h:i:s'),
+					'wisata_kuliner_id'	=> $idWisata,
+					'user_id'			=> $idUser
+				);
+
+				$tambahRat = $this->m_kuliner->tambahRating($val); 
+
+				if($tambahRat) $data = array('status'=>true);
+			}
 		}
 
 		$this->outputJson($data);

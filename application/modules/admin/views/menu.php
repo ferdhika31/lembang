@@ -64,13 +64,13 @@
 								</li>
 							</ul>
 						</li>
-						<li <?php echo ($menu=='pesan')? 'class="active open"': '';?>>
+						<!-- <li <?php echo ($menu=='pesan')? 'class="active open"': '';?>>
 							<a href="<?php echo site_url('admin/pesan');?>">
 								<i class="fa fa-inbox"></i>
 								<span class="title">Pesan</span>
 								<span class="selected"></span>
 							</a>
-						</li>
+						</li> -->
 					</ul>
 				<!-- END SIDEBAR MENU -->
 				</div>

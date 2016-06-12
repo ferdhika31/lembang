@@ -102,6 +102,14 @@ class M_wisata extends CI_Model {
 	}
 
 	// Nilai/rating
+	public function topWisata(){
+		$query = $this->db->query("select *,SUM(jumlah_bintang)/COUNT(rating_alam_id) as jumRating, COUNT(rating_alam_id) as totRating 
+			from rating_alam GROUP BY wisata_alam_id ORDER BY totRating desc,jumRating desc limit 3");
+		$query = $query->result_array();
+
+		return $query;
+	}
+	
 	public function getAvRatingWisata($wisata_id=null){
 		$query = $this->db->query("select *,SUM(jumlah_bintang)/COUNT(rating_alam_id) as jumRating, COUNT(rating_alam_id) as totRating from rating_alam where wisata_alam_id=$wisata_id");
 		$query = $query->result_array();
@@ -119,7 +127,46 @@ class M_wisata extends CI_Model {
 		return $query;
 	}
 
+	public function cekRating($where=array()){
+		$query = $this->db->get_where($this->tb_rating,$where);
+		$query = $query->result_array();
+
+		if(!empty($query)){
+			return $query[0];
+		}
+	}
+
+	public function tambahRating($inp=array()){
+		$query = $this->db->insert($this->tb_rating,$inp);
+		return $query;
+	}
+
+	public function ubahRating($field=array(),$idna=array()){
+		$query = $this->db->update($this->tb_rating,$field,$idna);
+		return $query;
+	}
+
+	public function hapusRating($id_wisata=null){
+		$query = $this->db->delete($this->tb_rating,array('wisata_alam_id'=>$id_wisata));
+		return $query;
+	}
+
 	// Komentar
+	public function kirimKomentar($inp=array()){
+		$query = $this->db->insert($this->tb_komentar,$inp);
+		return $query;
+	}
+
+	public function hapusKomentar($id_komentar=null){
+		$query = $this->db->delete($this->tb_komentar,array('komentar_alam_id'=>$id_komentar));
+		return $query;
+	}
+
+	public function hapusKomentarOnWis($id_wisata=null){
+		$query = $this->db->delete($this->tb_komentar,array('wisata_alam_id'=>$id_wisata));
+		return $query;
+	}
+
 	public function getAllKomentar(){
 		$query = $this->db->join($this->tb_wisata,$this->tb_wisata.'.wisata_alam_id='.$this->tb_komentar.'.wisata_alam_id');
 		$query = $this->db->join($this->tb_user,$this->tb_user.'.user_id='.$this->tb_komentar.'.user_id');
